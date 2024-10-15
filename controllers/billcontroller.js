@@ -83,7 +83,7 @@ exports.createBillFromAppointment = async (req, res) => {
 // Manual bill creation by admin
 exports.manualCreateBill = async (req, res) => {
   try {
-    const { doctorId, patientId, hospitalId, description, paymentType } = req.body;
+    const { doctorId, patientId, hospitalId, description, paymentType, additionalFields } = req.body;
 
     // Calculate total amount from description
     const items = description.map(item => ({
@@ -119,6 +119,9 @@ exports.manualCreateBill = async (req, res) => {
       email: req.body.email,
       billTime: billTime, // Set the generated bill time here
       billDate: new Date(), // Set the current date
+
+      // Handle additional fields provided by the admin
+      additionalFields: additionalFields || {}, // Add additional fields if provided
     });
 
     await bill.save();
@@ -128,6 +131,7 @@ exports.manualCreateBill = async (req, res) => {
     res.status(500).json({ message: 'Error creating bill', error: error.message || error });
   }
 };
+
 
 
 
