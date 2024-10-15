@@ -1,58 +1,12 @@
-// const Chat = require('../models/chatModel');
-
-// // Fetch chat between doctor and patient
-// exports.getChat = async (req, res) => {
-//   const { doctorId, patientId } = req.params;
-//   try {
-//     const chat = await Chat.findOne({ doctor: doctorId, patient: patientId })
-//       .populate('doctor', 'name') // Populate doctor name
-//       .populate('patient', 'name'); // Populate patient name
-
-//     if (!chat) {
-//       return res.status(404).json({ msg: 'No chat history found' });
-//     }
-
-//     res.json(chat);
-//   } catch (error) {
-//     res.status(500).json({ msg: 'Server error' });
-//   }
-// };
-
-// // Save new chat message
-// exports.saveChatMessage = async (doctorId, patientId, message, senderId, senderModel) => {
-//   try {
-//     let chat = await Chat.findOne({ doctor: doctorId, patient: patientId });
-
-//     if (!chat) {
-//       chat = new Chat({ doctor: doctorId, patient: patientId });
-//     }
-
-//     const newMessage = {
-//       sender: senderId,
-//       senderModel,
-//       message,
-//       type: 'text', // You can modify this to handle file attachments
-//     };
-
-//     chat.messages.push(newMessage);
-//     chat.lastUpdated = Date.now();
-//     await chat.save();
-
-//     return newMessage;
-//   } catch (error) {
-//     console.error('Error saving message:', error);
-//   }
-// };
-
-
-// controllers/chatController.js
-const Chat = require('../models/chatModel');
+const Chat = require("../models/chatModel.js");
+const Doctor = require("../models/doctorModel.js");
+const Patient = require("../models/patientModel.js");
 
 // Create a new message
-exports.createMessage = async (req, res) => {
-    const { senderId, receiverId, messageContent } = req.body;
+const createMessage = async (req, res) => {
+    const { senderId, receiverId, doctorId, patientId, messageContent, mediaUrl, mediaType } = req.body;
     try {
-        const chat = new Chat({ senderId, receiverId, messageContent });
+        const chat = new Chat({ senderId, receiverId, doctorId, patientId, messageContent, mediaUrl, mediaType });
         await chat.save();
         res.status(201).json(chat);
     } catch (error) {
@@ -61,25 +15,21 @@ exports.createMessage = async (req, res) => {
 };
 
 // Retrieve chat history between a doctor and patient
-exports.getChatHistory = async (req, res) => {
+const getChatHistory = async (req, res) => {
     const { doctorId, patientId } = req.params;
     try {
-        const history = await Chat.find({ doctorId, patientId}).sort({ timestamp: 1 });
+        const history = await Chat.find({ doctorId, patientId }).sort({ timestamp: 1 });
         res.status(200).json(history);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
-// Update a message's status
-exports.updateMessageStatus = async (req, res) => {
+// Update a message's status to "read"
+const updateMessageStatus = async (req, res) => {
     const { chatId } = req.params;
     try {
-        const updatedChat = await Chat.findByIdAndUpdate(
-            chatId,
-            { status: 'read' },
-            { new: true }
-        );
+        const updatedChat = await Chat.findByIdAndUpdate(chatId, { status: "read" }, { new: true });
         res.status(200).json(updatedChat);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -87,22 +37,22 @@ exports.updateMessageStatus = async (req, res) => {
 };
 
 // Delete a message
-exports.deleteMessage = async (req, res) => {
+const deleteMessage = async (req, res) => {
     const { chatId } = req.params;
     try {
         await Chat.findByIdAndDelete(chatId);
-        res.status(200).json({ message: 'Message deleted' });
+        res.status(200).json({ message: "Message deleted" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
 // Retrieve list of doctors a patient has chatted with
-exports.getDoctorContacts = async (req, res) => {
+const getDoctorContacts = async (req, res) => {
     const { patientId } = req.params;
     try {
-        const doctorContacts = await Chat.find({  patientId })
-            .distinct('doctorId');
+        const doctorIds = await Chat.find({ patientId }).distinct("doctorId");
+        const doctorContacts = await Doctor.find({ _id: { $in: doctorIds } }).select("-password");
         res.status(200).json(doctorContacts);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -110,13 +60,22 @@ exports.getDoctorContacts = async (req, res) => {
 };
 
 // Retrieve list of patients a doctor has chatted with
-exports.getPatientContacts = async (req, res) => {
+const getPatientContacts = async (req, res) => {
     const { doctorId } = req.params;
     try {
-        const patientContacts = await Chat.find({  doctorId })
-            .distinct('patientId');
+        const patientIds = await Chat.find({ doctorId }).distinct("patientId");
+        const patientContacts = await Patient.find({ _id: { $in: patientIds } }).select("-password");
         res.status(200).json(patientContacts);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
+};
+
+module.exports = {
+    createMessage,
+    getChatHistory,
+    updateMessageStatus,
+    deleteMessage,
+    getDoctorContacts,
+    getPatientContacts
 };

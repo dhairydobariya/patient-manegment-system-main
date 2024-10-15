@@ -134,7 +134,6 @@ exports.manualCreateBill = async (req, res) => {
 
 
 
-
 // Update bill function
 exports.updateBill = async (req, res) => {
   try {
