@@ -137,15 +137,81 @@ exports.updateBill = async (req, res) => {
     const { billId } = req.params;
     const updates = req.body;
 
-    const updatedBill = await Bill.findByIdAndUpdate(billId, updates, { new: true });
+    // Find the bill to be updated
+    const bill = await Bill.findById(billId);
 
-    if (!updatedBill) {
+    if (!bill) {
       return res.status(404).json({ message: 'Bill not found' });
     }
 
+    // Update common fields that are shared between appointment-based and manually created bills
+    bill.doctorName = updates.doctorName || bill.doctorName;
+    bill.doctorId = updates.doctorId || bill.doctorId;
+    bill.patientName = updates.patientName || bill.patientName;
+    bill.patientId = updates.patientId || bill.patientId;
+    bill.hospitalId = updates.hospitalId || bill.hospitalId;
+    bill.gender = updates.gender || bill.gender;
+    bill.age = updates.age || bill.age;
+    bill.address = updates.address || bill.address;
+    bill.diseaseName = updates.diseaseName || bill.diseaseName;
+    bill.phoneNumber = updates.phoneNumber || bill.phoneNumber;
+    bill.paymentType = updates.paymentType || bill.paymentType;
+    bill.email = updates.email || bill.email;
+
+    // Update appointmentId if provided (if it's an appointment-based bill)
+    if (updates.appointmentId) {
+      bill.appointmentId = updates.appointmentId;
+    }
+
+    // Update description and recalculate totals if provided
+    if (updates.description && Array.isArray(updates.description)) {
+      const items = updates.description.map(item => ({
+        name: item.name,
+        amount: item.amount,
+        qty: item.qty,
+        total: item.amount * item.qty
+      }));
+
+      const totalAmount = items.reduce((acc, item) => acc + item.total, 0);
+
+      bill.description = items;
+      bill.amount = totalAmount;
+      bill.discount = totalAmount * 0.05; // 5% discount
+      bill.tax = totalAmount * 0.12; // 12% tax
+      bill.totalAmount = totalAmount - totalAmount * 0.05 + totalAmount * 0.12;
+    }
+
+    // Update insurance details if paymentType is 'insurance'
+    if (bill.paymentType === 'insurance') {
+      bill.insuranceDetails = {
+        insuranceCompany: updates.insuranceCompany || bill.insuranceDetails.insuranceCompany,
+        insurancePlan: updates.insurancePlan || bill.insuranceDetails.insurancePlan,
+        claimAmount: updates.claimAmount || bill.insuranceDetails.claimAmount,
+        claimedAmount: updates.claimedAmount || bill.insuranceDetails.claimedAmount
+      };
+    }
+
+    // Handle dynamic additional fields added/removed by admin
+    if (updates.additionalFields) {
+      bill.additionalFields = {
+        ...bill.additionalFields, // Preserve existing fields
+        ...updates.additionalFields // Update or add new fields
+      };
+
+      // Remove any fields explicitly set to null in the updates
+      Object.keys(bill.additionalFields).forEach(key => {
+        if (updates.additionalFields[key] === null) {
+          delete bill.additionalFields[key];
+        }
+      });
+    }
+
+    // Save the updated bill
+    const updatedBill = await bill.save();
     res.status(200).json({ message: 'Bill updated successfully', updatedBill });
   } catch (error) {
-    res.status(500).json({ message: 'Error updating bill', error });
+    console.error('Error updating bill:', error);
+    res.status(500).json({ message: 'Error updating bill', error: error.message || error });
   }
 };
 
