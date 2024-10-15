@@ -1,0 +1,130 @@
+Patient Management System
+Figma Link: Patient Management System Design
+Project Overview:
+The Full Stack Patient Management System includes both a Patient Panel and an Doctor Panel, with various functionalities such as authentication, profile management, appointment scheduling, patient records, prescriptions, teleconsultations, payments, and more. The team will consist of 3 developers: 1 for frontend, 1 for backend, and 1 full-stack developer.
+The project timeline is structured over 9 days, with the remaining 3 days dedicated to final adjustments based on the Figma design. The primary goal is to complete the core modules by the 9th day and ensure alignment with the Figma design.
+Milestones and Timeline
+Day 1: Setup & Authentication Module
+Milestones:
+• Setup project repositories for frontend and backend (Vercel setup for both frontend and backend).
+• Install basic dependencies (React, Node.js, Express, MongoDB, etc.).
+• Implement authentication module:
+User sign-up, login, and forgot password flows.
+JWT-based authentication.
+Form validation and error handling.
+Team Focus:
+Frontend: Build signup/login/forgot password pages with form validation
+
+
+Backend: Implement API endpoints for user authentication, password reset, and secure token-based suthentication.
+Day 2: Profile Section & Dashboard Setup
+Milestones:
+Build the profile management section:
+Update personal details, change password, etc.
+• Setup basic structure of the dashboard for both Doctor and Patient Panels.
+Team Focus:
+Frontend: Creste profile Ul (responsive as per Figma) and initial dashboard layout
+Backend: Build API endpoints for profile management.
+Full Stack: Integrate frontend with backend for profile update functionalities.
+Day 3: Appointment Management (Part 1)
+Milestones:
+Create appointment booking interface.
+• Implement backend logic for managing appointments (CRUD operations).
+Team Focus
+Frontend: Build Ul for booking, rescheduling, and canceling appointments.
+Backend: Set up API endpoints for creating, modifying, and deleting appointments.
+Full Stack: Ensure proper integration and basic testing for appointment management.
+
+
+
+Day 4: Appointment Management (Part 2)
+Milestones:
+• Complete the Appointment Management functionalities:
+Handle appointment availability and appointment history.
+Integrate backend logic with frontend for smooth appointment management.
+Team Focus
+Frontend: Implement appointment history and details screens.
+Backend: Add support for fetching appointment history.
+Full Stack: Complete integration and test the appointment module.
+Day 5: Patient Record Access & Prescription Tools (Part 1)
+Milestones:
+Build patient record access section:
+• Allow doctors to view and update patient records.
+Start working on prescription tools creation.
+Team Focus
+• Frontend: Design and develop Ul for patient record access.
+Backend: Implement endpoints to fetch and update patient records.
+Full Stack: Integrate frontend and backend for patient records.
+Day 6: Prescription Tools (Part 2) & Teleconsultation Module
+Milestones:
+Complete prescription tools module.
+Implement teleconsultation functionalities (chat, video call, etc.).
+
+
+
+
+Team Focus.
+Frontend: Design the Ul for prescriptions and teleconsultation (chat and video call).
+Backend: Build API endpoints for prescription creation and teleconsultation management
+Full Stack: Integrate chat and video call functionalities using third-party libraries (e.g., WebRTC for video calls).
+Day 7: Payment System & Billing Management
+Milestones:
+Set up payment gateway integration for appointments.
+Implement billing and invoice generation.
+Team Focus:
+Frontend: Build Ul for payments and billing.
+Backend: Integrate a payment gateway (Stripe, PayPal, etc.) and handle
+payment processing.
+Full Stack: Connect billing with appointments and test the entire payment flow.
+Day 8: Admin Panel & Advanced Features
+Milestones:
+Finalize the Doctor Panel:
+• Manage appointments, view patient records, handle payments, etc.
+Implement role-based access control for Doctor and Patient users.
+Team Focus:
+Frontend: Complete the Admin Panel Ul and integrate advanced features.
+
+
+
+Backend: Implement role-based access for different users.
+Full Stack: Ensure smooth functionality across admin-related tasks.
+Day 9: Testing, Bug Fixes & Final Integration
+Milestones:
+• Thoroughly test all modules (Auth, Profile, Appointment. Teleconsultation, Payments, etc.).
+Fix any bugs and ensure the system functions seamlessly.
+Ensure frontend design matches the Figma prototype.
+Team Focus:
+Frontend: Polish Ul, ensure responsive design.
+Backend: Handle any edge cases or performance issues.
+Full Stack: Perform integration testing across the system.
+Day 10-12: Final Adjustments Based on Figma Design
+• Complete any remaining features based on the Figma design.
+Ensure that both the Patient Panel and Doctor Panel are pixel-perfect
+Final deployment on Vercel for both frontend and backend.
+Submit final project links for review.
+README and Documentation Instructions
+1. Project Structure:
+Create a GitHub repository with the project name, e.g.. patient-management system..
+
+
+
+Organize your repository as follows:
+patient-management system/
+frontend/
+backend/
+postman/
+README.md
+2. README File:
+• Include the following sections in your README.md
+■ Project Title: Name of the project.
+■Project Overview: Brief description of the Patient Management System.
+■Installation Instructions: Steps to set up both frontend and backend.
+■ Key Features: Highlight major functionalities (e.g.. authentication, appointment management).
+■API Documentation: Link to your Postman API collection.
+Live Demo: Include the hosted URLs for both the frontend and backend
+■ Contributors: List of team members involved in the project
+3. Postman API Collection:
+Create a Postman collection documenting all API endpoints.
+Export the Postman collection and place it in the postman/folder of your repository.
+4. Repository Settings:
+• Ensure your repository is public so that it can be accessed by others for review
