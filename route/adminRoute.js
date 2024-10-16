@@ -68,4 +68,7 @@
 
     router.get('/admindata' ,authenticateUser,authorizeRoles('admin'), adminController.datadeshboard)
 
+    //billing and payment
+    router.get('/bills',authenticateUser,authorizeRoles('admin'), adminController.getBills);
+
     module.exports = router;

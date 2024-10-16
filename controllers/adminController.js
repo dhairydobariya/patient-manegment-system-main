@@ -898,6 +898,82 @@ let getDoctorDetails = async (req, res) => {
   }
 };
 
+// Get all bills with filter on patient name
+let getBills = async (req, res) => {
+  try {
+    const { patientName } = req.query; // Fetch the search query for filtering by patient name
+
+    // Build the query object
+    const query = {};
+
+    // If a patient name is provided, search for bills by that patient's name
+    if (patientName) {
+      query.patientName = { $regex: patientName, $options: 'i' }; // Case-insensitive search
+    }
+
+    // Fetch bills with populated patient and doctor details
+    const bills = await Bill.find(query)
+      .populate({
+        path: 'patientId',
+        select: 'firstName lastName phoneNumber' // Only populate firstName, lastName, and phoneNumber from Patient model
+      })
+      .populate({
+        path: 'doctorId',
+        select: 'doctorName' // Fetch the doctor's name using doctorId
+      })
+      .select('billNo patientId doctorId diseaseName phoneNumber paymentStatus billDate billTime paymentType insuranceDetails'); // Select necessary fields
+
+    // Map data for "Monitor" array
+    const monitorData = bills.map(bill => ({
+      billId: bill._id,
+      billNo: bill.billNo,
+      patientName: `${bill.patientId?.firstName || ''} ${bill.patientId?.lastName || ''}`.trim(),
+      diseaseName: bill.diseaseName || 'N/A',
+      phoneNumber: bill.patientId?.phoneNumber || bill.phoneNumber,
+      status: bill.paymentStatus,
+      date: bill.billDate.toDateString(),
+      time: bill.billTime
+    }));
+
+    // Map data for "Insurance" array (with insurance details)
+    const insuranceData = bills
+      .filter(bill => bill.paymentType === 'insurance') // Only include bills with 'insurance' payment type
+      .map(bill => ({
+        billNo: bill.billNo,
+        doctorName: bill.doctorId?.doctorName || 'N/A', // Fetch the doctor's name
+        patientName: `${bill.patientId?.firstName || ''} ${bill.patientId?.lastName || ''}`.trim(),
+        diseaseName: bill.diseaseName || 'N/A',
+        insuranceCompany: bill.insuranceDetails?.insuranceCompany || 'N/A',
+        insurancePlan: bill.insuranceDetails?.insurancePlan || 'N/A',
+        billDate: bill.billDate.toDateString() // Bill date
+      }));
+
+    // Map data for "Payment Process" array
+    const paymentProcessData = bills.map(bill => ({
+      billNo: bill.billNo,
+      patientName: `${bill.patientId?.firstName || ''} ${bill.patientId?.lastName || ''}`.trim(),
+      diseaseName: bill.diseaseName || 'N/A',
+      phoneNumber: bill.patientId?.phoneNumber || bill.phoneNumber,
+      status: bill.paymentStatus,
+      date: bill.billDate.toDateString(),
+      time: bill.billTime
+    }));
+
+    // Return all three arrays in the response
+    res.status(200).json({
+      success: true,
+      monitorData,
+      insuranceData,
+      paymentProcessData
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error retrieving bills',
+      error: error.message
+    });
+  }
+};
 
 module.exports = {
     defaults,
@@ -924,5 +1000,5 @@ module.exports = {
     searchAppointments,
     getAppointmentsForUser,
     getDoctorDetails,
-
+    getBills,
 };

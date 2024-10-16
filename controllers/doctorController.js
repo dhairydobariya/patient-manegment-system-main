@@ -368,6 +368,68 @@ const getTodaysAppointments = async (req, res) => {
     }
   };
   
+  //prescription today and older
+  const getPrescriptions = async (req, res) => {
+    try {
+      const today = new Date();
+      const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Start of today
+      const endOfDay = new Date(today.setHours(23, 59, 59, 999)); // End of today
+  
+      // Fetch all prescriptions
+      const prescriptions = await Prescription.find()
+        .populate({
+          path: 'appointmentId',
+          select: 'appointmentType appointmentDate appointmentTime' // Populate required appointment fields
+        })
+        .populate({
+          path: 'patientId',
+          select: 'firstName lastName phoneNumber age gender' // Populate patient details
+        });
+  
+      // Separate today's and older prescriptions
+      const todayPrescriptions = prescriptions.filter(prescription =>
+        prescription.appointmentId.appointmentDate >= startOfDay &&
+        prescription.appointmentId.appointmentDate <= endOfDay
+      );
+  
+      const olderPrescriptions = prescriptions.filter(prescription =>
+        prescription.appointmentId.appointmentDate < startOfDay
+      );
+  
+      // Map the prescription data for today's prescriptions
+      const todayPrescriptionData = todayPrescriptions.map(prescription => ({
+        patientName: `${prescription.patientId.firstName} ${prescription.patientId.lastName}`,
+        patientPhoneNumber: prescription.patientId.phoneNumber,
+        appointmentType: prescription.appointmentId.appointmentType,
+        appointmentTime: prescription.appointmentId.appointmentTime,
+        age: prescription.patientId.age,
+        gender: prescription.patientId.gender
+      }));
+  
+      // Map the prescription data for older prescriptions
+      const olderPrescriptionData = olderPrescriptions.map(prescription => ({
+        patientName: `${prescription.patientId.firstName} ${prescription.patientId.lastName}`,
+        patientPhoneNumber: prescription.patientId.phoneNumber,
+        appointmentType: prescription.appointmentId.appointmentType,
+        appointmentTime: prescription.appointmentId.appointmentTime,
+        age: prescription.patientId.age,
+        gender: prescription.patientId.gender
+      }));
+  
+      // Return the response with today's and older prescriptions
+      res.status(200).json({
+        success: true,
+        todayPrescriptions: todayPrescriptionData,
+        olderPrescriptions: olderPrescriptionData
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Error retrieving prescriptions',
+        error: error.message
+      });
+    }
+  };
   
 
 module.exports = {
@@ -381,4 +443,5 @@ module.exports = {
     getPatientRecords,
     getPatientDetails,
     getAppointments,
+    getPrescriptions
 };

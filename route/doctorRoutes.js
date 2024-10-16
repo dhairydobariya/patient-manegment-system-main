@@ -22,7 +22,9 @@ router.get('/doctor-pannel/patient-records/:period' ,authenticateUser,authorizeR
 router.get('/doctor-pannel/patient-records/patient/:id' ,authenticateUser,authorizeRoles('Doctor'), doctorController.getPatientDetails)
 
 //prescription-manegment
-router.get('/doctor-pannel/prescription/appointment' ,authenticateUser,authorizeRoles('Doctor'), doctorController.getAppointments)
+router.get('/doctor-pannel/prescription' ,authenticateUser,authorizeRoles('Doctor'), doctorController.getAppointments)
+router.get('/doctor-pannel/prescription/manage' ,authenticateUser,authorizeRoles('Doctor'), doctorController.getPrescriptions)
+
 
 
 module.exports = router;
