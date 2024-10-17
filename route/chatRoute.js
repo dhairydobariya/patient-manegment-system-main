@@ -1,22 +1,16 @@
+// routes/chatRoutes.js
 const express = require('express');
 const router = express.Router();
-const {
-    createMessage,
-    getChatHistory,
-    updateMessageStatus,
-    deleteMessage,
-    getDoctorContacts,
-    getPatientContacts
-} = require('../controllers/chatController.js');
+const chatController = require('../controllers/chatcontroller');
 
 // CRUD operations for chat messages
-router.post('/', createMessage);
-router.get('/:doctorId/:patientId', getChatHistory);
-router.put('/:chatId', updateMessageStatus);
-router.delete('/:chatId', deleteMessage);
+router.post('/api/chat', chatController.createMessage);
+router.get('/api/chat/:doctorId/:patientId', chatController.getChatHistory);
+router.put('/api/chat/:chatId', chatController.updateMessageStatus);
+router.delete('/api/chat/:chatId', chatController.deleteMessage);
 
 // Endpoints to retrieve contacts list
-router.get('/contacts/patient/:patientId', getDoctorContacts);
-router.get('/contacts/doctor/:doctorId', getPatientContacts);
+router.get('/api/chat/contacts/patient/:patientId', chatController.getDoctorContacts);
+router.get('/api/chat/contacts/doctor/:doctorId', chatController.getPatientContacts);
 
 module.exports = router;

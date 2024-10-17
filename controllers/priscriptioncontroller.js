@@ -5,7 +5,7 @@ const Appointment = require('../models/appointmentmodel');
 let createPrescription = async (req, res) => {
     try {
       const { appointmentId } = req.params;
-      const { medicine, doctorSignature, note, hospitalName, patientName, doctorName, doctorSpecification, gender, patientAddress, age } = req.body;
+      const { medicine, doctorSignature, note} = req.body;
   
       // Check if appointment exists
       const appointment = await Appointment.findById(appointmentId)

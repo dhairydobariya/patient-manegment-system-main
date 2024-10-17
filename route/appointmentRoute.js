@@ -7,12 +7,10 @@ const { createAppointment,
         deleteAppointment,
         addUnavailableTime ,
         removeUnavailableTime,
-        // getScheduledAppointments,
         getTodayAppointments,
         getPreviousAppointments,
         getCanceledAppointments,
         getUpcomingAppointments,
-        // getPendingAppointments,
         getAppointmentsByDoctor,
         getAppointmentsByPatient,
     } = require('../controllers/appointmentController.js');
@@ -34,16 +32,17 @@ router.get('/:id',authenticateUser,authorizeRoles('Doctor' , 'patient'), getAppo
 router.patch('/:id' ,authenticateUser,authorizeRoles('Doctor' , 'patient') , updateAppointment);
 
 // Cancel an appointment
-router.patch('/:id/cancel' ,authenticateUser,authorizeRoles('patient'), cancelAppointment);
+router.patch('/:id/cancel' ,authenticateUser,authorizeRoles('Doctor','patient'), cancelAppointment);
 
-// Delete appointment (admin only)
+
+
+// Delete appointment (doctor and patient  only)
 router.delete('/:id' ,authenticateUser,authorizeRoles('Doctor' , 'patient'), deleteAppointment);
 
 
+
+
 router.post('/doctors/unavailable-times',authenticateUser,authorizeRoles('Doctor'), addUnavailableTime);
-
-
-
 
 // Route for removing unavailable time
 router.delete('/doctors/unavailable-times',authenticateUser,authorizeRoles('Doctor'), removeUnavailableTime);
@@ -66,10 +65,3 @@ router.get('/appointments/canceled',authenticateUser,authorizeRoles('Doctor' , '
 
 
 module.exports = router;
-
-
-
-// router.get('/scheduled',authenticateUser,authorizeRoles('Doctor'), getScheduledAppointments);
-// router.get('/previous',authenticateUser,authorizeRoles('Doctor'), getPreviousAppointments);
-// router.get('/canceled',authenticateUser,authorizeRoles('Doctor'), getCanceledAppointments);
-// router.get('/pending',authenticateUser,authorizeRoles('Doctor'), getPendingAppointments);

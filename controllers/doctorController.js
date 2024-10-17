@@ -2,6 +2,7 @@ const Doctor = require('../models/doctorModel');
 const bcrypt = require('bcrypt');
 const Appointment = require('../models/appointmentmodel');
 const Patient = require('../models/patientModel'); 
+const Prescription = require('../models/priscriptionmodel')
 const fs = require('fs');
 const path = require('path');
 const cloudinary = require('../middleware/cloudinaryConfig');
@@ -105,7 +106,6 @@ let updateProfile = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-
 
 const changeDoctorPassword = async (req, res) => {
     const { currentPassword, newPassword, confirmPassword } = req.body;
@@ -371,65 +371,87 @@ const getTodaysAppointments = async (req, res) => {
   //prescription today and older
   const getPrescriptions = async (req, res) => {
     try {
-      const today = new Date();
-      const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Start of today
-      const endOfDay = new Date(today.setHours(23, 59, 59, 999)); // End of today
+      const doctorId = req.user.id; // Get doctor ID from the logged-in user
   
-      // Fetch all prescriptions
-      const prescriptions = await Prescription.find()
-        .populate({
-          path: 'appointmentId',
-          select: 'appointmentType appointmentDate appointmentTime' // Populate required appointment fields
+      // Start and end of today (UTC)
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+  
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999);
+  
+      // 1. Fetch today's prescriptions without checking the status
+      const todayAppointments = await Appointment.find({
+        doctor: doctorId,
+        appointmentDate: { $gte: startOfToday, $lte: endOfToday },
+      }).populate('patient'); // Ensure patient is populated
+  
+      // Log today's appointments for debugging purposes
+      console.log("Today's Appointments: ", todayAppointments);
+  
+      const todayPrescriptions = await Promise.all(
+        todayAppointments.map(async (appointment) => {
+          const patient = appointment.patient; // Use populated patient
+          if (!patient) return null; // Skip if no patient data
+  
+          return {
+            appointmentId: appointment._id,
+            patientName: `${patient.firstName} ${patient.lastName}`,
+            patientNumber: patient.phoneNumber,
+            appointmentType: appointment.appointmentType,
+            appointmentTime: appointment.appointmentTime,
+            patientAge: patient.age,
+            gender: patient.gender,
+          };
         })
-        .populate({
-          path: 'patientId',
-          select: 'firstName lastName phoneNumber age gender' // Populate patient details
-        });
-  
-      // Separate today's and older prescriptions
-      const todayPrescriptions = prescriptions.filter(prescription =>
-        prescription.appointmentId.appointmentDate >= startOfDay &&
-        prescription.appointmentId.appointmentDate <= endOfDay
       );
   
-      const olderPrescriptions = prescriptions.filter(prescription =>
-        prescription.appointmentId.appointmentDate < startOfDay
+      // Filter out any null values (appointments without valid patients)
+      const filteredTodayPrescriptions = todayPrescriptions.filter(p => p !== null);
+  
+      // 2. Fetch older prescriptions without checking the status
+      const olderAppointments = await Appointment.find({
+        doctor: doctorId,
+        appointmentDate: { $lt: startOfToday }, // Fetch appointments before today
+      }).populate('patient'); // Ensure patient is populated
+  
+      // Log older appointments for debugging purposes
+      console.log("Older Appointments: ", olderAppointments);
+  
+      const olderPrescriptions = await Promise.all(
+        olderAppointments.map(async (appointment) => {
+          const patient = appointment.patient; // Use populated patient
+          if (!patient) return null; // Skip if no patient data
+  
+          return {
+            appointmentId: appointment._id,
+            patientName: `${patient.firstName} ${patient.lastName}`,
+            patientNumber: patient.phoneNumber,
+            appointmentDate: appointment.appointmentDate,
+            appointmentType: appointment.appointmentType,
+            appointmentTime: appointment.appointmentTime,
+            patientAge: patient.age,
+            gender: patient.gender,
+          };
+        })
       );
   
-      // Map the prescription data for today's prescriptions
-      const todayPrescriptionData = todayPrescriptions.map(prescription => ({
-        patientName: `${prescription.patientId.firstName} ${prescription.patientId.lastName}`,
-        patientPhoneNumber: prescription.patientId.phoneNumber,
-        appointmentType: prescription.appointmentId.appointmentType,
-        appointmentTime: prescription.appointmentId.appointmentTime,
-        age: prescription.patientId.age,
-        gender: prescription.patientId.gender
-      }));
+      // Filter out any null values (appointments without valid patients)
+      const filteredOlderPrescriptions = olderPrescriptions.filter(p => p !== null);
   
-      // Map the prescription data for older prescriptions
-      const olderPrescriptionData = olderPrescriptions.map(prescription => ({
-        patientName: `${prescription.patientId.firstName} ${prescription.patientId.lastName}`,
-        patientPhoneNumber: prescription.patientId.phoneNumber,
-        appointmentType: prescription.appointmentId.appointmentType,
-        appointmentTime: prescription.appointmentId.appointmentTime,
-        age: prescription.patientId.age,
-        gender: prescription.patientId.gender
-      }));
-  
-      // Return the response with today's and older prescriptions
+      // Respond with success and the data
       res.status(200).json({
         success: true,
-        todayPrescriptions: todayPrescriptionData,
-        olderPrescriptions: olderPrescriptionData
+        todayPrescriptions: filteredTodayPrescriptions,
+        olderPrescriptions: filteredOlderPrescriptions,
       });
+  
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Error retrieving prescriptions',
-        error: error.message
-      });
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Server error' });
     }
   };
+  
   
 
 module.exports = {
