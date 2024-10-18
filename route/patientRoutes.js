@@ -19,7 +19,31 @@ router.get('/profile', authenticateUser,authorizeRoles("patient") ,patientContro
 router.patch('/profile', authenticateUser,authorizeRoles("patient"),upload.single('profileImage'), patientController.updatePatientProfile);
 
 
-//patient deshboard
+//patient pannel
+
+// patient health record page and its functionalty
+
+router.get('/personal-health-record/profile', authenticateUser,authorizeRoles("patient") ,patientController.getPatientProfile);
+router.get('/personal-health-record/medicalhistory', authenticateUser,authorizeRoles("patient") ,patientController.getMedicalHistory);
+router.get('/personal-health-record/prescription', authenticateUser,authorizeRoles("patient") ,patientController.getPrescriptions);
+router.get('/personal-health-record/prescription/:prescriptionId', authenticateUser,authorizeRoles("patient") ,patientController.getPrescriptionById);
+router.get('/personal-health-record/medicalhistory/:appointmentId', authenticateUser,authorizeRoles("patient") ,patientController.getMedicalHistoryById);
+router.get('/personal-health-record/AllAppointment', authenticateUser,authorizeRoles("patient") ,patientController.getAllAppointmentsForPatient);
+router.get('/personal-health-record/patientRecords', authenticateUser,authorizeRoles("patient") ,patientController.getAllPatientRecords);
+
+
+//appointment page routes
+router.get('/appointment-page/scheduled', authenticateUser,authorizeRoles("patient") ,patientController.getScheduledAppointments);
+router.get('/appointment-page/previous', authenticateUser,authorizeRoles("patient") ,patientController.getPreviousAppointments);
+router.get('/appointment-page/canceled', authenticateUser,authorizeRoles("patient") ,patientController.getCanceledAppointments);
+router.get('/appointment-page/pending', authenticateUser,authorizeRoles("patient") ,patientController.getPendingAppointments);
+router.get('/appointment-page/one-appointment/:appointmentId', authenticateUser,authorizeRoles("patient") ,patientController.getAppointmentDetails);
+
+
+//prescription page
+router.get('/prescription-page/all-prescription', authenticateUser,authorizeRoles("patient") ,patientController.getAllPrescriptions);
+
+
 
 
 module.exports = router;
