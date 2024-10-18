@@ -18,4 +18,8 @@ router.get('/profile', authenticateUser,authorizeRoles("patient") ,patientContro
 // Update Patient Profile
 router.patch('/profile', authenticateUser,authorizeRoles("patient"),upload.single('profileImage'), patientController.updatePatientProfile);
 
+
+//patient deshboard
+
+
 module.exports = router;
