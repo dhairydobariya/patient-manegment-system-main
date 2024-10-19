@@ -12,24 +12,22 @@
     //add hospital 
     // Create a new hospital
     router.post('/hospitals',authenticateUser,authorizeRoles('admin'), adminController.createHospital);
-
     // Get all hospitals
-    router.get('/hospitals',authenticateUser,authorizeRoles('admin'), adminController.getAllHospitals);
-    
+    router.get('/hospitals',authenticateUser,authorizeRoles('admin'), adminController.getAllHospitals);  
     // Get a single hospital by ID
     router.get('/hospitals/:id',authenticateUser,authorizeRoles('admin'), adminController.getHospitalById);
-
     // Update a hospital by ID
     router.put('/hospitals/:id',authenticateUser,authorizeRoles('admin'), adminController.updateHospitalById);
-
     // Delete a hospital by ID
     router.delete('/hospitals/:id',authenticateUser,authorizeRoles('admin'), adminController.deleteHospitalById);
+
 
 
     //profile
     router.get('/profile' ,authenticateUser,authorizeRoles('admin'), adminController.getprofile )
     router.patch('/profile' ,authenticateUser,authorizeRoles('admin'),upload.single('profileImage'), adminController.updateProfile )
     router.post('/profile/changepass' , authenticateUser,authorizeRoles('admin'), adminController.changeAdminPassword)
+
 
     //doctor-manegment 
     router.get('/doctor-manegment', authenticateUser,authorizeRoles('admin') ,adminController.getDoctorsByHospital );
@@ -41,16 +39,12 @@
     //patient-manegment
     // GET Today's appointments
     router.get('/patient-manegment/appointments/today',authenticateUser,authorizeRoles('Doctor' ,'admin') , adminController.getTodayAppointments);
-
     // GET Previous appointments
     router.get('/patient-manegment/appointments/previous',authenticateUser,authorizeRoles('Doctor' , 'admin') , adminController.getPreviousAppointments);
-
     // GET Upcoming appointments
     router.get('/patient-manegment/appointments/upcoming',authenticateUser,authorizeRoles('Doctor' , 'admin') , adminController.getUpcomingAppointments);
-
     // GET Canceled appointments
     router.get('/patient-manegment/appointments/canceled',authenticateUser,authorizeRoles('Doctor' , 'admin') , adminController.getCanceledAppointments);
-
     // GET Appointment details by ID
     router.get('/patient-manegment/appointments/:appointmentId' ,authenticateUser,authorizeRoles('Doctor' , 'admin') , adminController.getAppointmentDetails);
 

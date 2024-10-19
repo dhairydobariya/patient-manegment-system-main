@@ -44,6 +44,8 @@ router.get('/appointment-page/one-appointment/:appointmentId', authenticateUser,
 router.get('/prescription-page/all-prescription', authenticateUser,authorizeRoles("patient") ,patientController.getAllPrescriptions);
 
 
+//bill page routes
+router.get('/bill-page', authenticateUser,authorizeRoles("patient") ,patientController.getBills);
 
 
 module.exports = router;

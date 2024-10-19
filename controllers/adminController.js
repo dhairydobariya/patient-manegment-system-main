@@ -421,6 +421,7 @@ const changeAdminPassword = async (req, res) => {
 };
 
 
+
 // Helper function to calculate patient statistics
 const getPatientStatistics = async (hospitalId) => {
   const now = new Date();

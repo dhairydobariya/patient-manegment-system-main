@@ -3,6 +3,7 @@ const PatientRecord = require('../models/patientRecordsmodel');
 const Doctor = require('../models/doctorModel');
 const Prescription = require('../models/priscriptionmodel');
 const Appointment = require('../models/appointmentmodel')
+const Bill = require('../models/billmodel');
 
 const fs = require('fs');
 const path = require('path');
@@ -430,6 +431,46 @@ const getAllAppointmentsForPatient = async (req, res) => {
     }
   };
 
+
+  //bill page for this comment 
+  //paid and unpaid bills
+
+  const getBills = async (req, res) => {
+    try {
+      const { paymentStatus } = req.query; // Get paymentStatus (paid/unpaid) from query params
+  
+      // Build the query object
+      const query = {};
+      
+      // Add payment status to the query if provided
+      if (paymentStatus) {
+        query.paymentStatus = paymentStatus;
+      }
+  
+      // Find the bills based on the query
+      const bills = await Bill.find(query)
+        .populate('doctorId', 'name')  // Populate doctor name from Doctor model
+        .populate('hospitalId', 'name') // Populate hospital name from Hospital model
+        .exec();
+  
+      // Transform the response to include only relevant fields
+      const formattedBills = bills.map(bill => ({
+        doctorName: bill.doctorName,
+        hospitalName: bill.hospitalId.name, // Assuming the hospital name is stored as 'name'
+        billDate: bill.billDate,
+        billTime: bill.billTime,
+        totalAmount: bill.totalAmount,
+        billId: bill._id
+      }));
+  
+      // Send response
+      res.status(200).json(formattedBills);
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
+  };
+
+
 module.exports = {
     register,
     getPatientProfile,
@@ -446,5 +487,5 @@ module.exports = {
     getPendingAppointments,
     getAppointmentDetails,
     getAllPrescriptions,
-    
+    getBills,
 }
