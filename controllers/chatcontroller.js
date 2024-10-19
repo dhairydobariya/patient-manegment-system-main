@@ -2,7 +2,7 @@
 const Chat = require('../models/chatModel');
 
 // Create a new message
-exports.createMessage = async (req, res) => {
+const createMessage = async (req, res) => {
     const { senderId, receiverId, messageContent } = req.body;
     try {
         const chat = new Chat({ senderId, receiverId, messageContent });
@@ -14,7 +14,7 @@ exports.createMessage = async (req, res) => {
 };
 
 // Retrieve chat history between a doctor and patient
-exports.getChatHistory = async (req, res) => {
+const getChatHistory = async (req, res) => {
     const { doctorId, patientId } = req.params;
     try {
         const history = await Chat.find({
@@ -30,7 +30,7 @@ exports.getChatHistory = async (req, res) => {
 };
 
 // Update a message's status
-exports.updateMessageStatus = async (req, res) => {
+const updateMessageStatus = async (req, res) => {
     const { chatId } = req.params;
     try {
         const updatedChat = await Chat.findByIdAndUpdate(
@@ -45,7 +45,7 @@ exports.updateMessageStatus = async (req, res) => {
 };
 
 // Delete a message
-exports.deleteMessage = async (req, res) => {
+const deleteMessage = async (req, res) => {
     const { chatId } = req.params;
     try {
         await Chat.findByIdAndDelete(chatId);
@@ -56,7 +56,7 @@ exports.deleteMessage = async (req, res) => {
 };
 
 // Retrieve list of doctors a patient has chatted with
-exports.getDoctorContacts = async (req, res) => {
+const getDoctorContacts = async (req, res) => {
     const { patientId } = req.params;
     try {
         const doctorContacts = await Chat.find({ senderId: patientId })
@@ -68,7 +68,7 @@ exports.getDoctorContacts = async (req, res) => {
 };
 
 // Retrieve list of patients a doctor has chatted with
-exports.getPatientContacts = async (req, res) => {
+const getPatientContacts = async (req, res) => {
     const { doctorId } = req.params;
     try {
         const patientContacts = await Chat.find({ senderId: doctorId })
@@ -78,3 +78,12 @@ exports.getPatientContacts = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+module.exports = {
+    createMessage,
+    getChatHistory,
+    updateMessageStatus,
+    deleteMessage,
+    getDoctorContacts,
+    getPatientContacts
+}

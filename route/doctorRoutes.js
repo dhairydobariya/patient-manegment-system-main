@@ -20,11 +20,13 @@ router.get('/doctor-pannel/appointment/canceld' ,authenticateUser,authorizeRoles
 //patient records
 router.get('/doctor-pannel/patient-records/:period' ,authenticateUser,authorizeRoles('Doctor'), doctorController.getPatientRecords)
 router.get('/doctor-pannel/patient-records/patient/:id' ,authenticateUser,authorizeRoles('Doctor'), doctorController.getPatientDetails)
-
+authenticateUser
 //prescription-manegment
 router.get('/doctor-pannel/prescription' ,authenticateUser,authorizeRoles('Doctor'), doctorController.getAppointments)
 router.get('/doctor-pannel/prescription/manage' ,authenticateUser,authorizeRoles('Doctor'), doctorController.getPrescriptions)
 
+//chat page 
+router.get('/doctor-pannel/chat-app/patientdetail' ,authenticateUser,authorizeRoles('Doctor'), doctorController.getPatientsForDoctor)
 
 
 module.exports = router;

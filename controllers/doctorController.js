@@ -300,18 +300,33 @@ const getTodaysAppointments = async (req, res) => {
         return res.status(404).json({ message: 'Patient not found.' });
       }
   
-      // Respond with patient details
+      // Fetch the patient's appointments
+      const appointments = await Appointment.find({ patient: patientId })
+        .select('diseaseName patientIssue appointmentDate appointmentTime appointmentType') // Select only relevant fields
+        .exec();
+  
+      // Respond with patient details and appointment data
       return res.status(200).json({
-        patientid:patient.id,
-        firstName: patient.firstName,
-        lastName: patient.lastName,
-        email: patient.email,
-        phoneNumber: patient.phoneNumber,
-        age: patient.age,
-        gender: patient.gender,
-        bloodGroup: patient.bloodGroup,
-        dateOfBirth: patient.dateOfBirth,
-        address: patient.address,
+        patientDetails: {
+          patientId: patient.id,
+          firstName: patient.firstName,
+          lastName: patient.lastName,
+          email: patient.email,
+          phoneNumber: patient.phoneNumber,
+          age: patient.age,
+          gender: patient.gender,
+          bloodGroup: patient.bloodGroup,
+          dateOfBirth: patient.dateOfBirth,
+          address: patient.address,
+        },
+        appointments: appointments.map(appointment => ({
+          appointmentID : appointment.id,
+          diseaseName: appointment.diseaseName,
+          patientIssue: appointment.patientIssue,
+          appointmentDate: appointment.appointmentDate,
+          appointmentTime: appointment.appointmentTime,
+          appointmentType: appointment.appointmentType,
+        }))
       });
     } catch (error) {
       return res.status(500).json({ message: error.message });
@@ -452,6 +467,51 @@ const getTodaysAppointments = async (req, res) => {
     }
   };
   
+  //chat app page data 
+  //get patient detial
+
+  // Controller to fetch patient data for doctor panel with search filter
+  const getPatientsForDoctor = async (req, res) => {
+  const { search } = req.query; // Capture the 'search' query parameter for filtering by patient name
+
+  try {
+    // Define the filter based on the search query
+    let filter = {};
+    if (search) {
+      const searchRegex = new RegExp(search, 'i'); // Create a case-insensitive regex for partial matching
+      filter = {
+        $or: [
+          { firstName: { $regex: searchRegex } }, // Match first name
+          { lastName: { $regex: searchRegex } }   // Match last name
+        ]
+      };
+    }
+
+    // Fetch patients from the database with the filter applied
+    const patients = await Patient.find(filter)
+      .select('id firstName lastName profileImage') // Select only the necessary fields
+      .exec();
+
+    // Check if patients exist
+    if (!patients || patients.length === 0) {
+      return res.status(404).json({ message: 'No patients found.' });
+    }
+
+    // Respond with the list of patients
+    return res.status(200).json({
+      patients: patients.map(patient => ({
+        patientId: patient._id,
+        name: `${patient.firstName} ${patient.lastName}`,
+        profileImage: patient.profileImage
+      }))
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
+
   
 
 module.exports = {
@@ -465,5 +525,6 @@ module.exports = {
     getPatientRecords,
     getPatientDetails,
     getAppointments,
-    getPrescriptions
+    getPrescriptions,
+    getPatientsForDoctor,
 };

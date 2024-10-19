@@ -940,6 +940,7 @@ let getBills = async (req, res) => {
     const insuranceData = bills
       .filter(bill => bill.paymentType === 'insurance') // Only include bills with 'insurance' payment type
       .map(bill => ({
+        billId: bill._id,
         billNo: bill.billNo,
         doctorName: bill.doctorId?.doctorName || 'N/A', // Fetch the doctor's name
         patientName: `${bill.patientId?.firstName || ''} ${bill.patientId?.lastName || ''}`.trim(),
@@ -951,6 +952,7 @@ let getBills = async (req, res) => {
 
     // Map data for "Payment Process" array
     const paymentProcessData = bills.map(bill => ({
+      billId: bill._id,
       billNo: bill.billNo,
       patientName: `${bill.patientId?.firstName || ''} ${bill.patientId?.lastName || ''}`.trim(),
       diseaseName: bill.diseaseName || 'N/A',
