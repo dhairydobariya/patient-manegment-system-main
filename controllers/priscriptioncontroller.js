@@ -48,8 +48,7 @@ let createPrescription = async (req, res) => {
       res.status(500).json({ message: 'Failed to create prescription', error: error.message });
     }
   };
-  
-  
+   
 // Get all prescriptions (optional pagination can be added)
 const getAllPrescriptions = async (req, res) => {
   try {

@@ -183,41 +183,39 @@ const generateJwt = (identifier) => {
     return jwt.sign({ identifier }, JWT_SECRET, { expiresIn: '10m' }); // Token expires in 10 minutes
 };
 
-// Step 1: Send OTP to email or phone
-exports.sendOtpForPasswordReset = async (req, res) => {
-    const { email, phoneNumber } = req.body;
+// Function to check if input is a valid email
+const isEmail = (input) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(input);
+};
 
+// Step 1: Send OTP to email or phone (single input field for email/phoneNumber)
+exports.sendOtpForPasswordReset = async (req, res) => {
+    const { identifier } = req.body; // Single field for both email or phone
+  
+    
     try {
         let user;
-        let identifier;
         let isPhone = false;
 
-        // Check if an email is provided
-        if (email) {
-            user = await Admin.findOne({ email }) ||
-                await Doctor.findOne({ email }) ||
-                await Patient.findOne({ email });
+        // Check if input is an email or phone number
+        if (isEmail(identifier)) {
+            user = await Admin.findOne({ email: identifier }) ||
+                await Doctor.findOne({ email: identifier }) ||
+                await Patient.findOne({ email: identifier });
 
             if (!user) {
                 return res.status(400).json({ message: 'No user found with this email' });
             }
-
-            identifier = email;
-        }
-        // Check if a phone number is provided
-        else if (phoneNumber) {
-            user = await Admin.findOne({ phoneNumber }) ||
-                await Doctor.findOne({ phoneNumber }) ||
-                await Patient.findOne({ phoneNumber });
+        } else {
+            user = await Admin.findOne({ phoneNumber: identifier }) ||
+                await Doctor.findOne({ phoneNumber: identifier }) ||
+                await Patient.findOne({ phoneNumber: identifier });
 
             if (!user) {
                 return res.status(400).json({ message: 'No user found with this phone number' });
             }
-
-            identifier = phoneNumber;
             isPhone = true;
-        } else {
-            return res.status(400).json({ message: 'Please provide an email or phone number' });
         }
 
         // Generate and store OTP
@@ -230,11 +228,11 @@ exports.sendOtpForPasswordReset = async (req, res) => {
 
         // Send OTP via email or SMS
         if (isPhone) {
-            // Send OTP via SMS
+            // Send OTP via SMS using Service SID
             await twilioClient.messages.create({
                 body: `Your OTP for password reset is: ${otp}. This OTP will expire in 10 minutes.`,
-                from: process.env.TWILIO_PHONE_NUMBER,
-                to: phoneNumber,
+                messagingServiceSid: process.env.TWILIO_MESSAGE_SID,
+                to: identifier,
             });
             res.json({ message: 'OTP sent to your phone number' });
         } else {
@@ -252,7 +250,7 @@ exports.sendOtpForPasswordReset = async (req, res) => {
 
             const mailOptions = {
                 from: process.env.EMAIL,
-                to: email,
+                to: identifier,
                 subject: 'Your Password Reset OTP',
                 text: `Your OTP for password reset is: ${otp}. This OTP will expire in 10 minutes.`,
             };

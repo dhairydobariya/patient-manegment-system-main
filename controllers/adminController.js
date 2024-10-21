@@ -946,9 +946,10 @@ let getBills = async (req, res) => {
         patientName: `${bill.patientId?.firstName || ''} ${bill.patientId?.lastName || ''}`.trim(),
         diseaseName: bill.diseaseName || 'N/A',
         insuranceCompany: bill.insuranceDetails?.insuranceCompany || 'N/A',
-        insurancePlan: bill.insuranceDetails?.insurancePlan || 'N/A',
+        insurancePlan: bill.insuranceDetails?.insurancePlan || 'N/A', 
         billDate: bill.billDate.toDateString() // Bill date
       }));
+
 
     // Map data for "Payment Process" array
     const paymentProcessData = bills.map(bill => ({

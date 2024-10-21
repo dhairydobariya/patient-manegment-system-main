@@ -17,7 +17,7 @@ const billSchema = new mongoose.Schema({
   phoneNumber: { type: String, required: true },
   paymentType: { type: String, enum: ['insurance', 'online', 'cash'], required: true },
   insuranceDetails: {
-    insuranceCompany: { type: String }, 
+    insuranceCompany: { type: String },
     insurancePlan: { type: String },
     claimAmount: { type: Number },
     claimedAmount: { type: Number }

@@ -15,8 +15,8 @@ const patientroute = require('./route/patientRoutes');
 const passwordroute = require('./route/passwordRoutes');
 const appointmentroute = require('./route/appointmentRoute.js');
 const prescriptionsroute = require('./route/prescriptionRoutes.js');
-const teleconsultationroute = require('./route/teleconsulationRoute.js');
 const patientrecordroute = require('./route/patientRecordRoute.js');
+const teleconsulation = require('./route/teleconsulationroute.js')
 
 dotenv.config();
 
@@ -38,8 +38,8 @@ app.use('/patient', patientroute);
 app.use('/password', passwordroute);
 app.use('/appointment', appointmentroute);
 app.use('/prescriptions', prescriptionsroute);
-app.use('/teleconsultation', teleconsultationroute);
 app.use('/patientrecords', patientrecordroute);
+app.use('/teleconsulation', teleconsulation)
 
 // Socket.io server setup
 const server = http.createServer(app);
