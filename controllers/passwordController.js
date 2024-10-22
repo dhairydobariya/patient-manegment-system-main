@@ -346,5 +346,6 @@ exports.resetPassword = async (req, res) => {
             return res.status(401).json({ message: 'Invalid OTP token' });
         }
         res.status(500).json({ message: 'Server error', error: error.message });
-    }
-};
+    } 
+                  
+};    

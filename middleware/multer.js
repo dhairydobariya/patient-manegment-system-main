@@ -19,14 +19,17 @@ const storage = new CloudinaryStorage({
       folder = 'patient/profileImages';
     } else if (file.fieldname === 'medicalCertificate' && req.user.role === 'Doctor') {
       folder = 'patient/medicalCertificates';
+    } else if (file.fieldname === 'testReport') {
+      // Adding the test report upload logic
+      folder = 'test-reports';
     }
 
     return {
       folder: folder,
       allowed_formats: ['jpg', 'png', 'jpeg'],
-      public_id: `${file.fieldname}-${Date.now()}`
+      public_id: `${file.fieldname}-${Date.now()}`, // Unique identifier for the uploaded file
     };
-  }
+  },
 });
 
 // Create upload instance
