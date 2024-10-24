@@ -1,6 +1,5 @@
 const express = require('express');
 const passwordController = require('../controllers/passwordController');
-const verifyOtpMiddleware = require('../middleware/verifyOtp');
 const router = express.Router();
 
 // Forgot Password - Step 1: Request OTP
@@ -13,3 +12,4 @@ router.post('/verify-otp', passwordController.verifyOtp);
 router.post('/reset-password', passwordController.resetPassword);
 
 module.exports = router;
+ 

@@ -93,13 +93,13 @@ appointmentSchema.pre('save', async function (next) {
   if (appointmentDateTime < currentDateTime) {
     return next(new Error('Appointments cannot be created for past dates.'));
   }
-
+   
   // Check if the doctor already has an appointment at the same time
   const existingAppointment = await mongoose.model('Appointment').findOne({
     doctor,
     appointmentDate,
     appointmentTime,
-    status: { $ne: 'canceled' } // Ensure to only consider non-canceled appointments
+    status: { $ne: 'canceled' } // Ensure to only consider n-canceled appointments
   });
 
   if (existingAppointment) {

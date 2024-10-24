@@ -64,7 +64,7 @@ exports.updatePatientRecord = async (req, res) => {
 
       if (req.file) {
           // If a new file is uploaded, directly set the Cloudinary URL
-          updates.medicalCertificate = req.file.path; // This comes from Cloudinary
+          updates.medicalCertificate = req.file.path; // This comes from Cloudinary    
       }
 
       const updatedRecord = await PatientRecord.findByIdAndUpdate(recordId, updates, { new: true });

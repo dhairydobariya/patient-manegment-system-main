@@ -321,6 +321,8 @@ const getAllAppointmentsForPatient = async (req, res) => {
     }
   };
   
+
+  
   //cancled appointment
   const getCanceledAppointments = async (req, res) => {
     try {
@@ -328,7 +330,8 @@ const getAllAppointmentsForPatient = async (req, res) => {
       const { startDate, endDate } = req.query; // Get start and end date from query parameters
   
       const query = { patient: patientId, status: 'canceled' };
-      if (startDate && endDate) {
+      if (startDate && endDate) {    
+                                              
         query.appointmentDate = { $gte: new Date(startDate), $lte: new Date(endDate) };
       }
   
