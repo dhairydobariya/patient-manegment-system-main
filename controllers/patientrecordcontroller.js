@@ -44,7 +44,7 @@ exports.getPatientRecordById = async (req, res) => {
     const record = await PatientRecord.findById(recordId)
       .populate('doctorId', 'name')
       .populate('patientId', 'firstName lastName');
-
+tt 
     if (!record) {
       return res.status(404).json({ message: 'Patient record not found' });
     }
@@ -55,6 +55,8 @@ exports.getPatientRecordById = async (req, res) => {
     res.status(500).json({ message: 'Error retrieving patient record', error: error.message });
   }
 };
+
+
 
 // Update patient record
 exports.updatePatientRecord = async (req, res) => {
@@ -80,7 +82,11 @@ exports.updatePatientRecord = async (req, res) => {
   }
 };
 
+
+
 // Delete patient record
+
+
 exports.deletePatientRecord = async (req, res) => {
   try {
     const { recordId } = req.params;
@@ -99,3 +105,7 @@ exports.deletePatientRecord = async (req, res) => {
     res.status(500).json({ message: 'Error deleting patient record', error: error.message });
   }
 };
+
+
+
+

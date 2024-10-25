@@ -14,6 +14,8 @@ nbv
             return res.status(404).json({ message: 'Appointment not found' });
         }
 
+
+
         // Check if the appointment status allows for teleconsultation
         if (appointment.teleconsultationStatus !== 'not_started') {
             return res.status(400).json({ message: 'Teleconsultation has already been started or completed.' });
@@ -122,6 +124,8 @@ exports.endTeleconsultation = async (req, res) => {
     }
     
 };
+
+    
 
 // Get teleconsultation status
 exports.getTeleconsultationStatus = async (req, res) => {

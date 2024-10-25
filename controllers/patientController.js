@@ -308,7 +308,9 @@ const getAllAppointmentsForPatient = async (req, res) => {
       if (startDate && endDate) {
         query.appointmentDate = { $gte: new Date(startDate), $lte: new Date(endDate) };
       }
-  
+
+      
+
       const appointments = await Appointment.find(query)
         .populate('doctor', 'name') // Populate doctor name
         .populate('hospital', 'name') // Populate hospital name
@@ -322,6 +324,8 @@ const getAllAppointmentsForPatient = async (req, res) => {
   };
   
 
+
+  
   
   //cancled appointment
   const getCanceledAppointments = async (req, res) => {
@@ -346,6 +350,7 @@ const getAllAppointmentsForPatient = async (req, res) => {
       res.status(500).json({ message: 'Server error', error: error.message });
     }
   };
+
 
 
   //pending appointmemnt 
