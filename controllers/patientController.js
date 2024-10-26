@@ -309,7 +309,7 @@ const getAllAppointmentsForPatient = async (req, res) => {
         query.appointmentDate = { $gte: new Date(startDate), $lte: new Date(endDate) };
       }
 
-      
+
 
       const appointments = await Appointment.find(query)
         .populate('doctor', 'name') // Populate doctor name
@@ -325,8 +325,7 @@ const getAllAppointmentsForPatient = async (req, res) => {
   
 
 
-  
-  
+
   //cancled appointment
   const getCanceledAppointments = async (req, res) => {
     try {

@@ -260,6 +260,7 @@ const getAppointment = async (req, res) => {
   };
   
 
+  
 // Add unavailable time
 const addUnavailableTime = async (req, res) => {
   try {

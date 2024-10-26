@@ -79,7 +79,7 @@ const appointmentSchema = new mongoose.Schema({
 // Custom validation for availability of the doctor
 appointmentSchema.pre('save', async function (next) {
   // Skip validation if the appointment is being canceled
-  if (this.status === 'canceled') {
+   if (this.status === 'canceled') {
     return next();
   }
 
@@ -105,6 +105,7 @@ appointmentSchema.pre('save', async function (next) {
   if (existingAppointment) {
     return next(new Error('Doctor already has an appointment at this time.'));
   }
+  
 
   // Check if the doctor is available at the requested time
   const doctorModel = await mongoose.model('Doctor').findById(doctor);
