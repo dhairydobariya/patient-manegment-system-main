@@ -8,7 +8,7 @@
     // Admin Registration
     router.post('/register', adminController.register);
 
-    
+    router.get('/defaults', adminController.defaults)
     //add hospital 
     // Create a new hospital
     router.post('/hospitals',authenticateUser,authorizeRoles('admin'), adminController.createHospital);
