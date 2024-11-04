@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const mongoose = require('./db/database'); // Mongoose config
 const Chat = require("./models/chatModel.js"); // Chat model
+const cors = require('cors')
 
 const chatRoutes = require('./route/chatRoute.js'); // Chat routes
 const route = require('./route/route');
@@ -23,6 +24,13 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 4000;
+
+app.use(
+    cors({
+      origin: process.env.CORS_ORIGIN,
+      credentials: true,
+    })
+  );
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
