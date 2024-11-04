@@ -53,7 +53,7 @@
 
 
 
-    // searching api   & deshboard 
+    // searching api   & deshboard - chages
     router.get('/jhn', adminController.getAppointmentsForUser);
 
     router.get('/patient', adminController.searchAppointments);
