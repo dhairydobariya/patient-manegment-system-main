@@ -54,7 +54,7 @@
 
 
     // searching api   & deshboard 
-    router.get('/all', adminController.getAppointmentsForUser);
+    router.get('/jhn', adminController.getAppointmentsForUser);
 
     router.get('/patient', adminController.searchAppointments);
 
