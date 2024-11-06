@@ -13,7 +13,7 @@
     // Create a new hospital
     router.post('/hospitals',authenticateUser,authorizeRoles('admin'), adminController.createHospital);
     // Get all hospitals
-    router.get('/hospitals',authenticateUser,authorizeRoles('admin'), adminController.getAllHospitals);  
+    router.get('/hospitals', adminController.getAllHospitals);  
     // Get a single hospital by ID
     router.get('/hospitals/:id',authenticateUser,authorizeRoles('admin'), adminController.getHospitalById);
     // Update a hospital by ID

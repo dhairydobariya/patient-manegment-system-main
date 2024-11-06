@@ -29,7 +29,7 @@ app.use(
     cors({
       origin: process.env.CORS_ORIGIN,
       credentials: true,
-    })
+    })    
   );
 
 // Middleware
@@ -51,6 +51,7 @@ app.use('/patientrecords', patientrecordroute);
 // app.use('/teleconsulation', teleconsulation)
 app.use('/testreport', testreportroute)
 
+  
 // Socket.io server setup
 const server = http.createServer(app);
 const io = socketIo(server);
