@@ -41,7 +41,7 @@ app.use(cookieParser());
 app.use('/', route);
 app.use('/bill', billroute);
 app.use('/chats', chatRoutes); // Chat routes
-app.use('/admin', adminroute);
+app.use('/admin', adminroute); // Admin route
 app.use('/doctor', doctorroute);
 app.use('/patient', patientroute);
 app.use('/password', passwordroute);
