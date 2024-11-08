@@ -497,6 +497,8 @@ const getTodaysAppointments = async (req, res) => {
       return res.status(404).json({ message: 'No patients found.' });
     }
 
+
+
     // Respond with the list of patients
     return res.status(200).json({
       patients: patients.map(patient => ({

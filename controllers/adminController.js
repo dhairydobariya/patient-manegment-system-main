@@ -31,7 +31,7 @@ const register = async (req, res) => {
     await body('state').notEmpty().withMessage('State is required').run(req);
     await body('city').notEmpty().withMessage('City is required').run(req);
     await body('hospital').notEmpty().withMessage('Hospital is required').run(req);
-    await body('role').notEmpty().withMessage('Role is required').run(req);
+    // await body('role').notEmpty().withMessage('Role is required').run(req);
 
     // Check for validation errors
     const errors = validationResult(req);
@@ -62,7 +62,7 @@ const register = async (req, res) => {
             state,
             city,
             hospital,
-            role,
+            role : role ? role : "admin",
             profileImage
         });
 
@@ -70,6 +70,7 @@ const register = async (req, res) => {
         await userdata.save();
         res.status(201).json({ message: "User successfully registered", user: userdata });
     } catch (error) {
+      console.error(error);  // Log the error for debugging
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };

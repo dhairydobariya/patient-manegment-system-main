@@ -10,10 +10,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // User Login
 let login = async (req, res) => {
-    const { email, password } = req.body; // Only email and password are required
-
+    const { identifier, password } = req.body; // Only email and password are required
+    const email = identifier
     // Validate the input
-    if (!email || !password) {
+    if (!identifier || !password) {
         return res.status(400).json({ message: 'Email and password are required' });
     }
 

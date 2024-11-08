@@ -19,6 +19,7 @@ const prescriptionsroute = require('./route/prescriptionRoutes.js');
 const patientrecordroute = require('./route/patientRecordRoute.js');
 // const teleconsulation = require('./route/teleconsulationroute.js')
 const testreportroute = require('./route/testreportroute.js')
+const morgan = require('morgan')
 
 dotenv.config();
 
@@ -32,10 +33,14 @@ app.use(
     })    
   );
 
+  app.use(morgan())
+
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+
+
 
 // Routes
 app.use('/', route);
