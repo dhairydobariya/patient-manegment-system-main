@@ -21,7 +21,7 @@ const register = async (req, res) => {
     if (!firstName || !lastName || !email || !phoneNumber || !age || !height || !weight || !gender || !bloodGroup || !dateOfBirth || !address || !password) {
         return res.status(400).json({ message: 'All fields are required' });
     }
-
+    
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newPatient = new Patient({
@@ -31,6 +31,7 @@ const register = async (req, res) => {
         await newPatient.save();
         res.json({ message: "Patient successfully registered", patient: newPatient });
     } catch (error) {
+      console.log(error, "relate")
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
