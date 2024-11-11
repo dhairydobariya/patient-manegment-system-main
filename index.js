@@ -1,4 +1,5 @@
 const express = require("express");
+const app = express();
 const http = require('http');
 const socketIo = require('socket.io');
 const cookieParser = require('cookie-parser');
@@ -6,6 +7,15 @@ const dotenv = require('dotenv');
 const mongoose = require('./db/database'); // Mongoose config
 const Chat = require("./models/chatModel.js"); // Chat model
 const cors = require('cors')
+const rateLimit = require('express-rate-limit');
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: "Too many requests, please try again later.",
+  });
+  
+
 
 const chatRoutes = require('./route/chatRoute.js'); // Chat routes
 const route = require('./route/route');
@@ -23,9 +33,9 @@ const morgan = require('morgan')
 
 dotenv.config();
 
-const app = express();
-const port = process.env.PORT || 4000;
 
+const port = process.env.PORT || 4000;
+app.use(limiter);
 app.use(
     cors({
       origin: process.env.CORS_ORIGIN,

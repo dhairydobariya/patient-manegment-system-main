@@ -8,6 +8,7 @@
     // Admin Registration
     router.post('/register', adminController.register);
 
+    //for cheq routes
     router.get('/defaults', adminController.defaults)
     //add hospital 
     // Create a new hospital
