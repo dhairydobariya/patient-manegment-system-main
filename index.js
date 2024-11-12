@@ -43,7 +43,7 @@ app.use(
     })    
   );
 
-  app.use(morgan())
+  app.use(morgan("dev"))
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
