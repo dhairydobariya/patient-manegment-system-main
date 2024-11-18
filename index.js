@@ -36,12 +36,20 @@ dotenv.config();
 
 const port = process.env.PORT || 4000;
 app.use(limiter);
+const allowedOrigins = process.env.CORS_ORIGINS.split(',');
+
 app.use(
-    cors({
-      origin: process.env.CORS_ORIGIN,
-      credentials: true,
-    })    
-  );
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
 
   app.use(morgan("dev"))
 
@@ -88,11 +96,11 @@ io.on('connection', (socket) => {
         const room = [senderId, receiverId].sort().join('-');
         io.to(room).emit('message', chat);
     });
-
-    socket.on('disconnect', () => {
+    socket.on('disconnect', () => { 
         console.log('User disconnected:', socket.id);
     });
 });
+
 
 
 // Start the server

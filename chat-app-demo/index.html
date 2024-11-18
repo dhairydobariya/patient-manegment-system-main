@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Private Chat with Media Support</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    #messages { list-style-type: none; padding: 0; }
+    #messages li { padding: 8px; margin-bottom: 4px; border-radius: 4px; max-width: 80%; }
+    .my-message { background: #daf8e3; text-align: right; float: right; clear: both; }
+    .incoming-message { background: #f3f3f3; text-align: left; float: left; clear: both; }
+    form { display: flex; }
+    input, button { padding: 8px; font-size: 1rem; margin: 4px 0; }
+  </style>
+</head>
+<body>
+  <h2>Private Chat with Media Support</h2>
+  <form id="loginForm">
+    <input id="userId" placeholder="Enter your user ID" required />
+    <input id="receiverId" placeholder="Enter receiver user ID" required />
+    <button>Join Chat</button>
+  </form>
+  <ul id="messages" style="display: none;"></ul>
+  <form id="form" style="display: none;">
+    <input id="input" autocomplete="off" placeholder="Type your message..." />
+    <input type="file" id="mediaInput" accept="image/*,application/pdf" />
+    <button>Send</button>
+  </form>
+
+  <script>
+    const socket = io();
+    let userId = '';
+    let receiverId = '';
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      userId = document.getElementById('userId').value;
+      receiverId = document.getElementById('receiverId').value;
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('messages').style.display = 'block';
+      document.getElementById('form').style.display = 'flex';
+      socket.emit('join', { userId, receiverId });
+    });
+
+    socket.on('chat history', function(history) {
+      history.forEach((msg) => {
+        addMessage(msg, msg.senderId === userId ? 'my-message' : 'incoming-message');
+      });
+    });
+
+    socket.on('private message', function(msg) {
+      addMessage(msg, msg.senderId === userId ? 'my-message' : 'incoming-message');
+    });
+
+    document.getElementById('form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const messageText = document.getElementById('input').value;
+      const mediaFile = document.getElementById('mediaInput').files[0];
+      
+      let mediaUrl = '';
+      let mediaType = '';
+
+      if (mediaFile) {
+        const formData = new FormData();
+        formData.append('media', mediaFile);
+        const response = await fetch('/upload', { method: 'POST', body: formData });
+        const result = await response.json();
+        mediaUrl = result.mediaUrl;
+        mediaType = result.mediaType;
+      }
+
+      socket.emit('private message', { message: messageText, receiverId, mediaUrl, mediaType });
+      document.getElementById('input').value = '';
+      document.getElementById('mediaInput').value = '';
+    });
+
+    function addMessage(msg, cssClass) {
+      const item = document.createElement('li');
+      if (msg.mediaUrl) {
+        if (msg.mediaType === 'application/pdf') {
+          const link = document.createElement('a');
+          link.href = msg.mediaUrl;
+          link.textContent = 'PDF Document';
+          link.target = '_blank';
+          item.appendChild(link);
+        } else {
+          const image = document.createElement('img');
+          image.src = msg.mediaUrl;
+          image.style.maxWidth = '200px';
+          item.appendChild(image);
+        }
+      } else {
+        item.textContent = msg.senderId + ": " + msg.message;
+      }
+      item.className = cssClass;
+      document.getElementById('messages').appendChild(item);
+      item.scrollIntoView();
+    }
+  </script>
+</body>
+</html>
