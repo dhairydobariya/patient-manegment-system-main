@@ -4,8 +4,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // Authentication Middleware
 const authenticateUser = (req, res, next) => {
-    const token = req.cookies.token; // JWT stored in cookies
-    
+    const token = req.cookies.token || req.headers.authorization.split(' ')[1];
+
     if (!token) {
         return res.status(401).json({ message: 'Access denied. Please log in first.' });
     }
@@ -26,8 +26,8 @@ const authenticateUser = (req, res, next) => {
 const authorizeRoles = (...allowedRoles) => {
     return (req, res, next) => {
         // Ensure user is authenticated first
-        const token = req.cookies.token; // JWT stored in cookies
-        
+        // const token = req.headers.authorization;
+        const token = req.cookies.token || req.headers.authorization.split(' ')[1];
         if (!token) {
             return res.status(401).json({ message: 'Access denied. Please log in first.' });
         }

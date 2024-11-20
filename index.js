@@ -37,20 +37,9 @@ dotenv.config();
 
 const port = process.env.PORT || 4000;
 app.use(limiter);
-const allowedOrigins = process.env.CORS_ORIGINS.split(',');
+const allowedOrigins = process.env.CORS_ORIGINS;
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-  })
-);
+app.use(cors(allowedOrigins))
 
   app.use(morgan("dev"))
 

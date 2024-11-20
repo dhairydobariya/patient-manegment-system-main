@@ -31,10 +31,11 @@
 
 
     //doctor-manegment 
-    router.get('/doctor-manegment', authenticateUser,authorizeRoles('admin') ,adminController.getDoctorsByHospital );
+    router.get('/doctor-manegment' ,authenticateUser,authorizeRoles('admin'),adminController.getDoctorsByHospital );
     router.get('/doctor-manegment/doctor/:id', authenticateUser,authorizeRoles('admin'), adminController.getDoctorById);
     router.post('/doctor-manegment/create-doctor',authenticateUser,authorizeRoles('admin'), adminController.createDoctor);
     router.delete('/doctor-manegment/doctor/:id', adminController.deleteDoctorById);
+
 
 
     //patient-manegment
@@ -56,7 +57,7 @@
 
     // searching api   & deshboard - chages
     router.get('/jhn', adminController.getAppointmentsForUser);
-
+  
     router.get('/patient', adminController.searchAppointments);
 
     router.get('/doctor' , adminController.getDoctorDetails)

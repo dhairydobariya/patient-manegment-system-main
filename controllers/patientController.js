@@ -44,6 +44,8 @@ const getPatientProfile = async (req, res) => {
         if (!patient) {
             return res.status(404).json({ message: 'Patient not found' });
         }
+        console.log(patient,"patient-------------------------------")
+        
         res.status(200).json(patient);
     } catch (error) {
         return res.status(500).json({ message: 'Server error', error: error.message });
