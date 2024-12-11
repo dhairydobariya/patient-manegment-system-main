@@ -65,12 +65,13 @@ app.use('/patientrecords', patientrecordroute);
 app.use('/testreport', testreportroute)
 
   
+
 // Socket.io server setup
 const server = http.createServer(app);
 const io = socketIo(server);
 
 // Socket.IO connection handling
-io.on('connection', (socket) => {
+io.on('connection', (socket) => {    
     console.log('A user connected:', socket.id);
 
     socket.on('joinRoom', ({ doctorId, patientId }) => {
